@@ -34,7 +34,8 @@ function getVersion() {
  * @constructor
  * @param {Object} options 参数
  */
-function SwRegisterPlugin(options) {
+function SwRegisterPlugin(options = {}) {
+
     this.tplPath = options.tplPath
         ? path.resolve(process.cwd(), options.tplPath)
         : path.resolve(__dirname, '..', 'templates', 'sw-register.js.tpl');

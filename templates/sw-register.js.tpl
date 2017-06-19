@@ -5,11 +5,11 @@ if ('serviceWorker' in navigator) {
      *
      * @param  {Object} e event source
      */
-    const handlerUpdateMessage = e => {
+    var handlerUpdateMessage = e => {
 
         // 在这里可以检测到 service worker 文件的更新，通常我们建议做页面的 reload
 
-        const metas = document.getElementsByTagName('meta');
+        var metas = document.getElementsByTagName('meta');
 
         for (let i = 0, len = metas.length; i < len; i++) {
             let meta = metas[i];
