@@ -35,7 +35,9 @@ function getVersion() {
  * @param {Object} options 参数
  */
 function SwRegisterPlugin(options) {
-    this.tplPath = options.tplPath;
+    this.tplPath = options.tplPath
+        ? path.resolve(process.cwd(), options.tplPath)
+        : path.resolve(__dirname, '..', 'templates', 'sw-register.js.tpl');
     this.fileName = options.fileName || 'sw-register.js';
     this.swFileName = options.swFileName || 'service-worker.js';
     this.version = options.version || getVersion();
@@ -47,7 +49,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
     const me = this;
     const swRegisterEntryFilePath = path.resolve(__dirname, '..', 'templates', 'sw-register-entry.js.tpl');
-    const swRegisterFilePath = path.resolve(__dirname, '..', 'templates', 'sw-register.js.tpl');
+    const swRegisterFilePath = me.tplPath;
     const refreshTipsHtml = fs.readFileSync(path.resolve(__dirname, '..', 'templates', 'refresh-tips.tpl'), 'utf-8')
         .replace(/\n/g, '\'\n+ \'');
 
