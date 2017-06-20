@@ -98,7 +98,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
                 con = babelCompiler(con)
                     .replace(
-                        /serviceWorker\.register\(.*\)/g,
+                        /serviceWorker\.register\(.*?\)/g,
                         'serviceWorker.register("' + me.swPath + '?v=' + me.version + '")'
                     );
 
