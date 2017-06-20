@@ -6,6 +6,10 @@
 import etpl from 'etpl';
 import fs from 'fs';
 import path from 'path';
+import babel from 'babel-core';
+
+
+const cwd = process.cwd();
 
 
 /**
@@ -29,6 +33,34 @@ function getVersion() {
 }
 
 /**
+ * babel 编译
+ *
+ * @param {string} source 源代码
+ * @return {string} 编译后的代码
+ */
+function babelCompiler(source) {
+    return babel.transform(source, {
+        comments: false,
+        minified: true,
+        plugins: [
+            'transform-runtime',
+            'external-helpers'
+        ],
+        presets: [
+            [
+                'env',
+                {
+                    targets: {
+                        node: 3
+                    },
+                    modules: false
+                }
+            ]
+        ]
+    }).code;
+}
+
+/**
  * sw Register 插件
  *
  * @constructor
@@ -36,11 +68,14 @@ function getVersion() {
  */
 function SwRegisterPlugin(options = {}) {
 
-    this.tplPath = options.tplPath
-        ? path.resolve(process.cwd(), options.tplPath)
-        : path.resolve(__dirname, '..', 'templates', 'sw-register.js.tpl');
-    this.fileName = options.fileName || 'sw-register.js';
-    this.swFileName = options.swFileName || 'service-worker.js';
+    let filePath = path.resolve(cwd, (options.filePath || './src/sw-register.js'));
+
+    if (!fs.existsSync(filePath)) {
+        filePath = path.resolve(__dirname, '..', 'templates', 'sw-register.js');
+    }
+    this.filePath = filePath;
+    this.fileName = path.basename(filePath);
+    this.swPath = options.swPath || '/service-worker.js';
     this.version = options.version || getVersion();
 }
 
@@ -50,11 +85,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
     const me = this;
     const swRegisterEntryFilePath = path.resolve(__dirname, '..', 'templates', 'sw-register-entry.js.tpl');
-    const swRegisterFilePath = me.tplPath;
-    const refreshTipsHtml = fs.readFileSync(path.resolve(__dirname, '..', 'templates', 'refresh-tips.tpl'), 'utf-8')
-        .replace(/\n/g, '\'\n+ \'');
-
-    me.refreshTipsHtml = refreshTipsHtml;
+    const swRegisterFilePath = me.filePath;
 
     compiler.plugin('emit', (compilation, callback) => {
         Object.keys(compilation.assets).forEach(asset => {
@@ -63,9 +94,13 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                 let htmlContent = compilation.assets[asset].source();
                 let swRegisterEntryFileTpl = fs.readFileSync(swRegisterEntryFilePath, 'utf-8');
                 let swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)(me);
+                let con = fs.readFileSync(swRegisterFilePath, 'utf-8');
 
-                let swRegisterFileTpl = fs.readFileSync(swRegisterFilePath, 'utf-8');
-                let swRegisterFileContent = etpl.compile(swRegisterFileTpl)(me);
+                con = babelCompiler(con)
+                    .replace(
+                        /serviceWorker\.register\(.*\)/g,
+                        'serviceWorker.register("' + me.swPath + '?v=' + me.version + '")'
+                    );
 
                 htmlContent = htmlContent.replace(/<\/body>/, swRegisterEntryFileContent + '</body>');
 
@@ -80,10 +115,10 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
                 compilation.assets[me.fileName] = {
                     source() {
-                        return swRegisterFileContent;
+                        return con;
                     },
                     size() {
-                        return swRegisterFileContent.length;
+                        return con.length;
                     }
                 };
             }
