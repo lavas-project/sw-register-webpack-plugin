@@ -1,6 +1,6 @@
 {
   "name": "sw-register-webpack-plugin",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "a webpack plugin for multi level path deploy",
   "main": "dist/index.js",
   "scripts": {
