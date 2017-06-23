@@ -88,7 +88,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
     compiler.plugin('emit', (compilation, callback) => {
 
-        let publicPath = me.publicPath = compilation.outputOptions.publicPath;
+        let publicPath = me.publicPath = ((compilation.outputOptions.publicPath || '') + '/').replace(/\/{1,}/g, '/');
 
         Object.keys(compilation.assets).forEach(asset => {
 
@@ -100,7 +100,8 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                 let version = me.version;
 
                 /* eslint-disable max-nested-callbacks */
-                con = babelCompiler(con).replace(/\(\s*?(['"])([^\s]+?\.js)\1\s*?\)/g, item => {
+                con = babelCompiler(con).replace(/(['"])([^\s]+?\.js)\1/g, item => {
+
                     let swJs = RegExp.$2;
 
                     if (swJs[0] !== '/') {
@@ -108,13 +109,16 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                     }
 
                     if (swJs.indexOf(publicPath) < 0) {
-                        return item.replace(
+                        const ret = item.replace(
                             swJs,
-                            (publicPath + swJs)
+                            (publicPath + '/' + swJs)
                                 .replace(/\/{1,}/g, '/')
                                 .replace(/\.js/g, ext => `${ext}?v=${version}`)
                         );
+                        return ret;
                     }
+
+                    return item.replace(/\.js/g, ext => `${ext}?v=${version}`);
                 });
 
 
