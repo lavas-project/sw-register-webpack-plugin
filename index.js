@@ -100,7 +100,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                 let version = me.version;
 
                 /* eslint-disable max-nested-callbacks */
-                con = babelCompiler(con).replace(/(['"])([^\s]+?\.js)\1/g, item => {
+                con = babelCompiler(con).replace(/(['"])([^\s\;\,\(\)]+?\.js)\1/g, item => {
 
                     let swJs = RegExp.$2;
 
