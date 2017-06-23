@@ -34,17 +34,6 @@ webpack({
 
 ## Options 参数
 
-### swPath
-
-```js
-{
-    swPath: '/service-worker.js'
-} 
-```
-
-`swPath` 的默认值是 `/service-worker.js`
-`swPath` 如果想换其他的文件名，必须要求是绝对路径的静态资源名，并且能够访问的到
-
 
 ### version
 
@@ -79,3 +68,6 @@ webpack({
 ```js
 clients[0].postMessage('updateMessage')
 ```
+
+
+`/service-worker.js` 需要保证能够被访问到

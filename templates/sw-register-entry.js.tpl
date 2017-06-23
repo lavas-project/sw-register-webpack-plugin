@@ -4,7 +4,7 @@
         var firstScript = document.getElementsByTagName('script')[0];
         script.type = 'text/javascript';
         script.async = true;
-        script.src = '/${fileName}?v=' + Date.now();
+        script.src = '${publicPath}${fileName}?v=' + Date.now();
         firstScript.parentNode.insertBefore(script, firstScript);
     };
 </script>

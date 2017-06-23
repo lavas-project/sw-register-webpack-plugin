@@ -75,7 +75,6 @@ function SwRegisterPlugin(options = {}) {
     }
     this.filePath = filePath;
     this.fileName = path.basename(filePath);
-    this.swPath = options.swPath || '/service-worker.js';
     this.version = options.version || getVersion();
 }
 
@@ -88,6 +87,9 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
     const swRegisterFilePath = me.filePath;
 
     compiler.plugin('emit', (compilation, callback) => {
+
+        let publicPath = me.publicPath = compilation.outputOptions.publicPath;
+
         Object.keys(compilation.assets).forEach(asset => {
 
             if (asset.indexOf('.html') > -1) {
@@ -95,12 +97,26 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                 let swRegisterEntryFileTpl = fs.readFileSync(swRegisterEntryFilePath, 'utf-8');
                 let swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)(me);
                 let con = fs.readFileSync(swRegisterFilePath, 'utf-8');
+                let version = me.version;
 
-                con = babelCompiler(con)
-                    .replace(
-                        /serviceWorker\.register\(.*?\)/g,
-                        'serviceWorker.register("' + me.swPath + '?v=' + me.version + '")'
-                    );
+                /* eslint-disable max-nested-callbacks */
+                con = babelCompiler(con).replace(/\(\s*?(['"])([^\s]+?\.js)\1\s*?\)/g, item => {
+                    let swJs = RegExp.$2;
+
+                    if (swJs[0] !== '/') {
+                        throw new Error('Js path in `sw-register.js` must be a absolute path');
+                    }
+
+                    if (swJs.indexOf(publicPath) < 0) {
+                        return item.replace(
+                            swJs,
+                            (publicPath + swJs)
+                                .replace(/\/{1,}/g, '/')
+                                .replace(/\.js/g, ext => `${ext}?v=${version}`)
+                        );
+                    }
+                });
+
 
                 htmlContent = htmlContent.replace(/<\/body>/, swRegisterEntryFileContent + '</body>');
 
