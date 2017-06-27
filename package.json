@@ -1,6 +1,6 @@
 {
   "name": "sw-register-webpack-plugin",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "a webpack plugin for multi level path deploy",
   "main": "dist/index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/searchfe/sw-register-webpack-plugin.git"
+    "url": "https://github.com/lavas-project/sw-register-webpack-plugin.git"
   },
   "keywords": [
     "webpack",
