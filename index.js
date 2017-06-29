@@ -3,10 +3,10 @@
  * @author mj(zoumiaojiang@gmail.com)
  */
 
-import etpl from 'etpl';
-import fs from 'fs';
-import path from 'path';
-import babel from 'babel-core';
+const etpl = require('etpl');
+const fs = require('fs');
+const path = require('path');
+const babel = require('babel-core');
 
 
 const cwd = process.cwd();
@@ -144,6 +144,5 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
 };
 
-/* eslint-disable */
-export default SwRegisterPlugin;
+module.exports = SwRegisterPlugin;
 
