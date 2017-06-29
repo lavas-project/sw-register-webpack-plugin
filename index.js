@@ -79,7 +79,7 @@ function SwRegisterPlugin(options = {}) {
 SwRegisterPlugin.prototype.apply = function (compiler) {
 
     const me = this;
-    const swRegisterEntryFilePath = path.resolve(__dirname, '..', 'templates', 'sw-register-entry.js.tpl');
+    const swRegisterEntryFilePath = path.resolve(__dirname, 'templates', 'sw-register-entry.js.tpl');
     const swRegisterFilePath = me.filePath;
 
     compiler.plugin('emit', (compilation, callback) => {
