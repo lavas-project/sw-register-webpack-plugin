@@ -71,7 +71,7 @@ function SwRegisterPlugin(options = {}) {
     let filePath = path.resolve(cwd, (options.filePath || './src/sw-register.js'));
 
     if (!fs.existsSync(filePath)) {
-        filePath = path.resolve(__dirname, '..', 'templates', 'sw-register.js');
+        filePath = path.resolve(__dirname, 'templates', 'sw-register.js');
     }
     this.filePath = filePath;
     this.fileName = path.basename(filePath);
