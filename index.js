@@ -42,10 +42,6 @@ function babelCompiler(source) {
     return babel.transform(source, {
         comments: false,
         minified: true,
-        plugins: [
-            'transform-runtime',
-            'external-helpers'
-        ],
         presets: [
             [
                 'env',
