@@ -66,7 +66,7 @@ webpack({
 当 service-worker.js 进入 activate 状态，可以做如下操作：
 
 ```js
-clients[0].postMessage('updateMessage')
+clients[0].postMessage('sw.update')
 ```
 
 
