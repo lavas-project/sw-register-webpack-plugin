@@ -11,6 +11,9 @@ import babel from 'babel-core';
 
 const cwd = process.cwd();
 
+let p = function (value) {
+    return value < 10 ? `0${value}` : value;
+};
 
 /**
  * 获取时间戳版本号
@@ -19,9 +22,6 @@ const cwd = process.cwd();
  */
 function getVersion() {
     let d = new Date();
-    let p = function (value) {
-        return value < 10 ? ('0' + value) : value;
-    };
 
     return ''
         + d.getFullYear()
@@ -118,7 +118,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                 });
 
 
-                htmlContent = htmlContent.replace(/<\/body>/, swRegisterEntryFileContent + '</body>');
+                htmlContent = htmlContent.replace(/<\/body>/, `${swRegisterEntryFileContent}</body>`);
 
                 compilation.assets[asset] = {
                     source() {
