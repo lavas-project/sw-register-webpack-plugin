@@ -8,10 +8,15 @@ const fs = require('fs');
 const path = require('path');
 const babel = require('babel-core');
 
+let cwd = process.cwd();
 
-const cwd = process.cwd();
-
-let p = function (value) {
+/**
+ * 给 100 以内的数字用 0 向左补齐
+ *
+ * @param  {number} value 数字
+ * @return {string}       补齐后的字符串
+ */
+let padding = function (value) {
     return value < 10 ? `0${value}` : value;
 };
 
@@ -25,11 +30,11 @@ function getVersion() {
 
     return ''
         + d.getFullYear()
-        + p(d.getMonth() + 1)
-        + p(d.getDate())
-        + p(d.getHours())
-        + p(d.getMinutes())
-        + p(d.getSeconds());
+        + padding(d.getMonth() + 1)
+        + padding(d.getDate())
+        + padding(d.getHours())
+        + padding(d.getMinutes())
+        + padding(d.getSeconds());
 }
 
 /**
@@ -63,7 +68,6 @@ function babelCompiler(source) {
  * @param {Object} options 参数
  */
 function SwRegisterPlugin(options = {}) {
-
     let filePath = path.resolve(cwd, (options.filePath || './src/sw-register.js'));
 
     if (!fs.existsSync(filePath)) {
@@ -77,13 +81,11 @@ function SwRegisterPlugin(options = {}) {
 
 
 SwRegisterPlugin.prototype.apply = function (compiler) {
-
-    const me = this;
-    const swRegisterEntryFilePath = path.resolve(__dirname, 'templates', 'sw-register-entry.js.tpl');
-    const swRegisterFilePath = me.filePath;
+    let me = this;
+    let swRegisterEntryFilePath = path.resolve(__dirname, 'templates', 'sw-register-entry.js.tpl');
+    let swRegisterFilePath = me.filePath;
 
     compiler.plugin('emit', (compilation, callback) => {
-
         let publicPath = me.publicPath = ((compilation.outputOptions.publicPath || '') + '/').replace(/\/{1,}/g, '/');
 
         Object.keys(compilation.assets).forEach(asset => {
@@ -97,7 +99,6 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
                 /* eslint-disable max-nested-callbacks */
                 con = babelCompiler(con).replace(/(['"])([^\s\;\,\(\)]+?\.js)\1/g, item => {
-
                     let swJs = RegExp.$2;
 
                     if (swJs[0] !== '/') {
@@ -105,18 +106,18 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                     }
 
                     if (swJs.indexOf(publicPath) < 0) {
-                        const ret = item.replace(
+                        let ret = item.replace(
                             swJs,
                             (publicPath + '/' + swJs)
                                 .replace(/\/{1,}/g, '/')
                                 .replace(/\.js/g, ext => `${ext}?v=${version}`)
                         );
+
                         return ret;
                     }
 
                     return item.replace(/\.js/g, ext => `${ext}?v=${version}`);
                 });
-
 
                 htmlContent = htmlContent.replace(/<\/body>/, `${swRegisterEntryFileContent}</body>`);
 
@@ -141,8 +142,6 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
         });
         callback();
     });
-
 };
 
 module.exports = SwRegisterPlugin;
-
