@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "sh build.sh",
+    "lint": "fecs --ignore=./.gitignore index.js lib templates --rule",
     "prepublish": "npm run build & cd ./dist"
   },
   "repository": {
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.0",
-    "babel-preset-env": "^1.3.2"
+    "babel-preset-env": "^1.3.2",
+    "fecs": "^1.4.0"
   }
 }
