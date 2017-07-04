@@ -89,6 +89,39 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
     compiler.plugin('emit', (compilation, callback) => {
         let prefix = me.prefix || compilation.outputOptions.publicPath || '';
         let publicPath = me.publicPath = (prefix + '/').replace(/\/{1,}/g, '/');
+        let con = fs.readFileSync(swRegisterFilePath, 'utf-8');
+        let version = me.version;
+
+        /* eslint-disable max-nested-callbacks */
+        con = babelCompiler(con).replace(/(['"])([^\s\;\,\(\)]+?\.js)\1/g, item => {
+            let swJs = RegExp.$2;
+
+            if (swJs[0] !== '/') {
+                throw new Error('Js path in `sw-register.js` must be a absolute path');
+            }
+
+            if (swJs.indexOf(publicPath) < 0) {
+                let ret = item.replace(
+                    swJs,
+                    (publicPath + '/' + swJs)
+                        .replace(/\/{1,}/g, '/')
+                        .replace(/\.js/g, ext => `${ext}?v=${version}`)
+                );
+
+                return ret;
+            }
+
+            return item.replace(/\.js/g, ext => `${ext}?v=${version}`);
+        });
+
+        compilation.assets[me.fileName] = {
+            source() {
+                return con;
+            },
+            size() {
+                return con.length;
+            }
+        };
 
         Object.keys(compilation.assets).forEach(asset => {
 
@@ -96,30 +129,6 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                 let htmlContent = compilation.assets[asset].source();
                 let swRegisterEntryFileTpl = fs.readFileSync(swRegisterEntryFilePath, 'utf-8');
                 let swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)(me);
-                let con = fs.readFileSync(swRegisterFilePath, 'utf-8');
-                let version = me.version;
-
-                /* eslint-disable max-nested-callbacks */
-                con = babelCompiler(con).replace(/(['"])([^\s\;\,\(\)]+?\.js)\1/g, item => {
-                    let swJs = RegExp.$2;
-
-                    if (swJs[0] !== '/') {
-                        throw new Error('Js path in `sw-register.js` must be a absolute path');
-                    }
-
-                    if (swJs.indexOf(publicPath) < 0) {
-                        let ret = item.replace(
-                            swJs,
-                            (publicPath + '/' + swJs)
-                                .replace(/\/{1,}/g, '/')
-                                .replace(/\.js/g, ext => `${ext}?v=${version}`)
-                        );
-
-                        return ret;
-                    }
-
-                    return item.replace(/\.js/g, ext => `${ext}?v=${version}`);
-                });
 
                 htmlContent = htmlContent.replace(/<\/body>/, `${swRegisterEntryFileContent}</body>`);
 
@@ -129,15 +138,6 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                     },
                     size() {
                         return htmlContent.length;
-                    }
-                };
-
-                compilation.assets[me.fileName] = {
-                    source() {
-                        return con;
-                    },
-                    size() {
-                        return con.length;
                     }
                 };
             }
