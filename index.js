@@ -11,13 +11,22 @@ const babel = require('babel-core');
 let cwd = process.cwd();
 
 /**
+ * 对于小于 100 的数字向左补全0
+ *
+ * @param  {number} value 数字
+ * @return {string}       补全后的字符串
+ */
+function padding(value) {
+    return value < 10 ? `0${value}` : value;
+}
+
+/**
  * 获取时间戳版本号
  *
  * @return {string} 版本号
  */
 function getVersion() {
     let d = new Date();
-    let padding = value => (value < 10 ? `0${value}` : value);
 
     return ''
         + d.getFullYear()
