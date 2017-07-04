@@ -1,12 +1,11 @@
 {
   "name": "sw-register-webpack-plugin",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "a webpack plugin for multi level path deploy",
   "main": "index.js",
   "scripts": {
     "build": "sh build.sh",
-    "lint": "fecs --ignore=./.gitignore index.js lib templates --rule",
-    "prepublish": "npm run build & cd ./dist"
+    "lint": "fecs --ignore=./.gitignore index.js lib templates --rule"
   },
   "repository": {
     "type": "git",

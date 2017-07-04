@@ -76,6 +76,7 @@ function SwRegisterPlugin(options = {}) {
     this.filePath = filePath;
     this.fileName = path.basename(filePath);
     this.version = options.version || getVersion();
+    this.prefix = options.prefix;
 }
 
 
@@ -86,7 +87,8 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
     let swRegisterFilePath = me.filePath;
 
     compiler.plugin('emit', (compilation, callback) => {
-        let publicPath = me.publicPath = ((compilation.outputOptions.publicPath || '') + '/').replace(/\/{1,}/g, '/');
+        let prefix = me.prefix || compilation.outputOptions.publicPath || '';
+        let publicPath = me.publicPath = (prefix + '/').replace(/\/{1,}/g, '/');
 
         Object.keys(compilation.assets).forEach(asset => {
 

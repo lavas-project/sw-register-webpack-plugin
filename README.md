@@ -52,11 +52,20 @@ webpack({
     filePath: './src/sw-register.js'
 }
 ```
-
 `filePath` 默认值是 `./src/sw-register.js`
 如果没有配置这个字段，插件会优先寻找 `./src/sw-register.js` 文件
 如果还是没找到这个文件，插件会使用内置的 `sw-resgiter.js` 文件进行 `service worker` 文件注册。
 
+
+### prefix
+
+```js
+{
+    prefix: '/some_scope'
+}
+```
+
+插件会默认使用 webpack output 中的 publicPath 来做为 service-worker.js 的 scope， 如果不想使用这个 scope， 可以通过 prefix 指定自定义的 scope。
 
 ### 注意事项
 
