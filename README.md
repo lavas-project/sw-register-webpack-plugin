@@ -1,7 +1,7 @@
 # sw-register-webpack-plugin
 
 [![npm version](https://badge.fury.io/js/sw-register-webpack-plugin.svg)](https://badge.fury.io/js/sw-register-webpack-plugin)
-[![Build Status](https://travis-ci.org/lavas-project/sw-register-webpack-plugin?branch=master)](https://travis-ci.org/lavas-project/sw-register-webpack-plugin)
+[![Build Status](https://travis-ci.org/lavas-project/sw-register-webpack-plugin.svg?branch=master)](https://travis-ci.org/lavas-project/sw-register-webpack-plugin)
 
 [![NPM](https://nodei.co/npm/sw-register-webpack-plugin.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/sw-register-webpack-plugin/)
 
