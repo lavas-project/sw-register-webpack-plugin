@@ -97,7 +97,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
             let swJs = RegExp.$2;
 
             if (swJs[0] !== '/') {
-                throw new Error('Js path in `sw-register.js` must be a absolute path');
+                return;
             }
 
             if (swJs.indexOf(publicPath) < 0) {
