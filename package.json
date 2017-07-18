@@ -1,12 +1,12 @@
 {
   "name": "sw-register-webpack-plugin",
   "version": "1.0.10",
-  "description": "a webpack plugin for multi level path deploy",
+  "description": "a webpack plugin for serviceWorker register and serviceWorker no-cache soultion",
   "main": "index.js",
   "scripts": {
     "build": "sh build.sh",
-    "lint": "fecs index.js lib templates test --rule",
-    "test": "npm run build && ./node_modules/.bin/nyc ava"
+    "lint": "fecs index.js lib templates test examples --rule",
+    "test": "npm run lint && npm run build && ./node_modules/.bin/nyc ava"
   },
   "repository": {
     "type": "git",
@@ -16,7 +16,8 @@
     "no-cache",
     "plugin",
     "serviceWorker",
-    "webpack"
+    "webpack",
+    "sw-regiser"
   ],
   "author": "mj (zoumiaojiang@gmail.com)",
   "license": "ISC",

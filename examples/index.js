@@ -1,4 +1,9 @@
-const fs = require('fs'); 
+/**
+ * @file examples index
+ * @author mj(zoumiaojiang@gmail.com)
+ */
+
+const fs = require('fs');
 const path = require('path');
 const rimraf = require('rimraf');
 
@@ -15,7 +20,9 @@ function cleanAllExamples() {
 
     for (let path of examplesDistPathNames) {
         fs.stat(path, (err, stat) => {
-            if (err) return; 
+            if (err) {
+                return;
+            }
             if (stat.isDirectory()) {
                 rimraf.sync(path);
             }

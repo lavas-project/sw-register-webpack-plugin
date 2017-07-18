@@ -1,5 +1,9 @@
+/**
+ * @file test webpack config
+ * @author mj(zoumiaojiang@gmail.com)
+ */
+
 const path = require('path');
-const webpack = require('webpack');
 const SwRegisterWebpackPlugin = require('../../dist/index.js');
 
 let config = {
@@ -9,7 +13,7 @@ let config = {
     },
     output: {
         filename: '[name].chunk.js',
-        path: path.join(__dirname,'./dist')
+        path: path.join(__dirname, './dist')
     },
     plugins: [
         new SwRegisterWebpackPlugin()
