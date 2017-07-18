@@ -1,11 +1,10 @@
 # sw-register-webpack-plugin
 
 [![npm version](https://badge.fury.io/js/sw-register-webpack-plugin.svg)](https://badge.fury.io/js/sw-register-webpack-plugin)
+[![npm download](https://img.shields.io/npm/dm/sw-register-webpack-plugin.svg)](https://npmjs.org/sw-register-webpack-plugin)
 [![Build Status](https://travis-ci.org/lavas-project/sw-register-webpack-plugin.svg?branch=master)](https://travis-ci.org/lavas-project/sw-register-webpack-plugin)
 
 [![NPM](https://nodei.co/npm/sw-register-webpack-plugin.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/sw-register-webpack-plugin/)
-
-[![npm download](https://img.shields.io/npm/dm/sw-register-webpack-plugin.svg)](https://npmjs.org/sw-register-webpack-plugin)
 
 > 该插件解决 `service-worker.js` 文件 `no-cache` 问题，如果在服务端能做到对 `service-worker.js` 的 `no-cache`, 可以忽略此方案。
 主要解决服务端不能对 `service-worker.js` 进行 `no-cache` 设置的问题，并且要求 `service-worker.js` 实时监测更新的场景。
