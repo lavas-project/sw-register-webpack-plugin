@@ -97,7 +97,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
             let swJs = RegExp.$2;
 
             if (swJs[0] !== '/') {
-                return;
+                return item;
             }
 
             if (swJs.indexOf(publicPath) < 0) {
