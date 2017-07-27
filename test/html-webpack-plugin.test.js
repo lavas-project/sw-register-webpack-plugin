@@ -79,35 +79,35 @@ test('it should hava right prefix `/a/b`', async t => {
 test('it should no sw-register in str.html', async t => {
     let html = await readFile(path.join(webpackBuildPath, 'str.html'));
 
-    t.false(html.includes('sw-register.js'));
+    t.false(html.toString().includes('sw-register.js'));
 });
 
 test('it should no sw-register in reg.html', async t => {
     let html = await readFile(path.join(webpackBuildPath, 'reg.html'));
 
-    t.false(html.includes('sw-register.js'));
+    t.false(html.toString().includes('sw-register.js'));
 });
 
 test('it should no sw-register in func.html', async t => {
     let html = await readFile(path.join(webpackBuildPath, 'func.html'));
 
-    t.false(html.includes('sw-register.js'));
+    t.false(html.toString().includes('sw-register.js'));
 });
 
 test('it should hava sw-register.js in str.html.tpl', async t => {
     let html = await readFile(path.join(webpackBuildPath, 'str.html.tpl'));
 
-    t.true(html.includes('sw-register.js'));
+    t.true(html.toString().includes('sw-register.js'));
 });
 
 test('it should hava sw-register.js in reg.html.tpl', async t => {
     let html = await readFile(path.join(webpackBuildPath, 'reg.html.tpl'));
 
-    t.true(html.includes('sw-register.js'));
+    t.true(html.toString().includes('sw-register.js'));
 });
 
 test('it should hava sw-register.js in func.html.tpl', async t => {
     let html = await readFile(path.join(webpackBuildPath, 'func.html.tpl'));
 
-    t.true(html.includes('sw-register.js'));
+    t.true(html.toString().includes('sw-register.js'));
 });
