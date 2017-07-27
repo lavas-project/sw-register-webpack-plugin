@@ -71,6 +71,41 @@ webpack({
 }
 ```
 
+### includes
+
+```js
+{
+    includes: [
+        'a.html.tpl', // 文件名为 a.html.tpl 的文件,
+        /b\.html\.tpl$/, //也可以是正则
+        // 也可以是一个 callback function, 参数为待验证的每一个文件的 path
+        function (asset) {
+            return asset.endsWith('c.html.tpl')
+        }
+    ]
+}
+```
+
+includes 是指定工程中非 html 文件也需要注册 sw 的，通常为模版文件。
+需要注意的是，如果要指定非 html 文件也自动注册 sw, 该文件内容必须包含 `<body></body>` 标签
+
+### excludes
+
+```js
+{
+    excludes: [
+        'a.html', // 文件名为 a.html 的文件,
+        /b\.html$/, //也可以是正则
+        // 也可以是一个 callback function, 参数为待验证的每一个文件的 path
+        function (asset) {
+            return asset.endsWith('c.html')
+        }
+    ]
+}
+```
+
+excludes 是指定工程中符合自动注册的文件中的某一些文件可以不自动注册。
+
 插件会默认使用 webpack output 中的 publicPath 来做为 service-worker.js 的 scope， 如果不想使用这个 scope， 可以通过 prefix 指定自定义的 scope。
 
 ### 注意事项

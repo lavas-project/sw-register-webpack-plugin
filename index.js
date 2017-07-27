@@ -61,6 +61,32 @@ function babelCompiler(source) {
     }).code;
 }
 
+
+/**
+ * 判断是否符合指定的规则
+ *
+ * @param {string} asset 捕获的文件名
+ * @param {Array} rules 规则列表
+ * @return {boolean} 判断的结果
+ */
+function isIn(asset, rules) {
+    for (let i = 0, len = rules.length; i < len; i++) {
+        let rule = rules[i];
+        if (typeof rule === 'function' && rule.call(this, asset)) {
+            return true;
+        }
+        else if (typeof rule === 'object' && rule instanceof RegExp && rule.test(asset)) {
+            return true;
+        }
+        else if (typeof rule === 'string' && asset.endsWith(rule)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
 /**
  * sw Register 插件
  *
@@ -77,6 +103,8 @@ function SwRegisterPlugin(options = {}) {
     this.fileName = path.basename(filePath);
     this.version = options.version || getVersion();
     this.prefix = options.prefix;
+    this.excludes = options.excludes || [];
+    this.includes = options.includes || [];
 }
 
 
@@ -124,9 +152,11 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
         };
 
         Object.keys(compilation.assets).forEach(asset => {
-
-            if (asset.indexOf('.html') > -1) {
-                let htmlContent = compilation.assets[asset].source();
+            // 默认会给每个 html 文件添加 sw-register.js
+            // 如果指定了不用添加 sw- register.js 的话，可以在 excludes 参数中指定
+            // 接受三种形式的值：字符串，正则表达式，回调函数
+            if (!isIn(asset, me.excludes) && (/\.html$/.test(asset) || isIn(asset, me.includes))) {
+                let htmlContent = compilation.assets[asset].source().toString();
                 let swRegisterEntryFileTpl = fs.readFileSync(swRegisterEntryFilePath, 'utf-8');
                 let swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)(me);
 
@@ -142,6 +172,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                 };
             }
         });
+
         callback();
     });
 };

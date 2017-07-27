@@ -30,7 +30,21 @@ test.before('run webpack build first', async t => {
     webpackBuildStats = await runWebpackCompilerMemoryFs(simpleConfig({
         version: 'test_version',
         prefix: '/a/b',
-        filePath: path.resolve(__dirname, '../examples/html-webpack-plugin/src/sw-register.js')
+        filePath: path.resolve(__dirname, '../examples/html-webpack-plugin/src/sw-register.js'),
+        excludes: [
+            'str.html',
+            /reg\.html$/,
+            function (asset) {
+                return asset.endsWith('func.html');
+            }
+        ],
+        includes: [
+            'str.html.tpl',
+            /reg\.html\.tpl$/,
+            function (asset) {
+                return asset.endsWith('func.html.tpl');
+            }
+        ]
     }));
 });
 
@@ -60,4 +74,40 @@ test('it should hava right prefix `/a/b`', async t => {
 
     t.true(htmlContent.toString().includes('script.src = \'/a/b/sw-register.js?v='));
     t.true(swContent.toString().includes('/a/b/service-worker.js?v='));
+});
+
+test('it should no sw-register in str.html', async t => {
+    let html = await readFile(path.join(webpackBuildPath, 'str.html'));
+
+    t.false(html.includes('sw-register.js'));
+});
+
+test('it should no sw-register in reg.html', async t => {
+    let html = await readFile(path.join(webpackBuildPath, 'reg.html'));
+
+    t.false(html.includes('sw-register.js'));
+});
+
+test('it should no sw-register in func.html', async t => {
+    let html = await readFile(path.join(webpackBuildPath, 'func.html'));
+
+    t.false(html.includes('sw-register.js'));
+});
+
+test('it should hava sw-register.js in str.html.tpl', async t => {
+    let html = await readFile(path.join(webpackBuildPath, 'str.html.tpl'));
+
+    t.true(html.includes('sw-register.js'));
+});
+
+test('it should hava sw-register.js in reg.html.tpl', async t => {
+    let html = await readFile(path.join(webpackBuildPath, 'reg.html.tpl'));
+
+    t.true(html.includes('sw-register.js'));
+});
+
+test('it should hava sw-register.js in func.html.tpl', async t => {
+    let html = await readFile(path.join(webpackBuildPath, 'func.html.tpl'));
+
+    t.true(html.includes('sw-register.js'));
 });

@@ -4,12 +4,43 @@
  */
 
 /* eslint-disable fecs-use-standard-promise */
+/* eslint-disable fecs-prefer-async-await */
 
 const MFS = require('memory-fs');
+const fs = require('fs');
 const Promise = require('bluebird');
 const webpack = require('webpack');
+const path = require('path');
 
 const outputFileSystem = new MFS();
+
+/**
+ * mock copy plugin
+ *
+ * @constructor
+ */
+function MockCopyPlugin() {}
+
+MockCopyPlugin.prototype.apply = function (compiler) {
+    compiler.plugin('compilation', function (compilation) {
+        let files = fs.readdirSync(path.resolve(__dirname, '../examples/html-webpack-plugin/src/htmls'));
+
+        files.forEach(file => {
+            let fileContent = fs.readFileSync(
+                path.resolve(__dirname, '../examples/html-webpack-plugin/src/htmls', file),
+                'utf-8'
+            );
+            compilation.assets[file] = {
+                source() {
+                    return fileContent;
+                },
+                size() {
+                    return fileContent.length;
+                }
+            };
+        });
+    });
+};
 
 exports.runWebpackCompilerMemoryFs = function runWebpackCompiler(config) {
     const compiler = webpack(config);
@@ -36,3 +67,5 @@ exports.runWebpackCompilerMemoryFs = function runWebpackCompiler(config) {
 };
 
 exports.testFs = outputFileSystem;
+
+exports.MockCopyWebpackPlugin = MockCopyPlugin;
