@@ -14,6 +14,7 @@ const path = require('path');
 
 const outputFileSystem = new MFS();
 
+/* eslint-disable fecs-prefer-class */
 /**
  * mock copy plugin
  *
@@ -41,6 +42,8 @@ MockCopyPlugin.prototype.apply = function (compiler) {
         });
     });
 };
+
+/* eslint-enable fecs-prefer-class */
 
 exports.runWebpackCompilerMemoryFs = function runWebpackCompiler(config) {
     const compiler = webpack(config);

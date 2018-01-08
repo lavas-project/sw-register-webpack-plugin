@@ -87,6 +87,7 @@ function isIn(asset, rules) {
 }
 
 
+/* eslint-disable fecs-prefer-class */
 /**
  * sw Register 插件
  *
@@ -106,6 +107,7 @@ function SwRegisterPlugin(options = {}) {
     this.excludes = options.excludes || [];
     this.includes = options.includes || [];
 }
+/* eslint-enable fecs-prefer-class */
 
 
 
@@ -121,25 +123,29 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
         let version = me.version;
 
         /* eslint-disable max-nested-callbacks */
-        con = babelCompiler(con).replace(/(['"])([^\s\;\,\(\)]+?\.js)\1/g, item => {
-            let swJs = RegExp.$2;
+        con = babelCompiler(con).replace(/(['"])([^\s;,()]+?\.js[^'"]*)\1/g, item => {
+            let swFilePath = RegExp.$2;
 
-            if (swJs[0] !== '/') {
-                return item;
+            if (/\.js/g.test(item)) {
+                item = item.replace(/\?/g, '&');
             }
 
-            if (swJs.indexOf(publicPath) < 0) {
+            // if is full url path or relative path
+            if (/^(http(s)?:)?\/\//.test(swFilePath) || swFilePath[0] !== '/') {
+                return item.replace(/\.js/g, ext => `${ext}?v=${version}`);
+            }
+
+            // if is absolute path
+            if (swFilePath.indexOf(publicPath) !== 0) {
                 let ret = item.replace(
-                    swJs,
-                    (publicPath + '/' + swJs)
+                    swFilePath,
+                    (publicPath + '/' + swFilePath)
                         .replace(/\/{1,}/g, '/')
                         .replace(/\.js/g, ext => `${ext}?v=${version}`)
                 );
 
                 return ret;
             }
-
-            return item.replace(/\.js/g, ext => `${ext}?v=${version}`);
         });
 
         compilation.assets[me.fileName] = {
@@ -153,7 +159,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
         Object.keys(compilation.assets).forEach(asset => {
             // 默认会给每个 html 文件添加 sw-register.js
-            // 如果指定了不用添加 sw- register.js 的话，可以在 excludes 参数中指定
+            // 如果指定了不用添加 sw-register.js 的话，可以在 excludes 参数中指定
             // 接受三种形式的值：字符串，正则表达式，回调函数
             if (!isIn(asset, me.excludes) && (/\.html$/.test(asset) || isIn(asset, me.includes))) {
                 let htmlContent = compilation.assets[asset].source().toString();
