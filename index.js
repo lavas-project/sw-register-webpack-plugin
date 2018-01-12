@@ -147,7 +147,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                 return ret;
             }
 
-            return swFilePath.replace(/\.js/g, ext => `${ext}?v=${version}`);
+            return item.replace(/\.js/g, ext => `${ext}?v=${version}`);
         });
 
         compilation.assets[me.fileName] = {
