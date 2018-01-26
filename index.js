@@ -176,7 +176,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                     size() {
                         return entryContent.length;
                     }
-                }
+                };
             });
         }
 
@@ -187,7 +187,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
             if (!isIn(asset, me.excludes) && (/\.html$/.test(asset) || isIn(asset, me.includes))) {
                 let htmlContent = compilation.assets[asset].source().toString();
                 let swRegisterEntryFileTpl = fs.readFileSync(swRegisterEntryFilePath, 'utf-8');
-                let swRegisterEntryFileContent
+                let swRegisterEntryFileContent;
 
                 if (me.entries.length !== 0) {
                     let entryName = asset.match(/(.+?)\.html$/)[1];
