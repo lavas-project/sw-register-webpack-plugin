@@ -106,6 +106,7 @@ function SwRegisterPlugin(options = {}) {
     this.prefix = options.prefix;
     this.excludes = options.excludes || [];
     this.includes = options.includes || [];
+    this.entries = options.entries || [];
 }
 /* eslint-enable fecs-prefer-class */
 
@@ -150,14 +151,34 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
             return item.replace(/\.js/g, ext => `${ext}?v=${version}`);
         });
 
-        compilation.assets[me.fileName] = {
-            source() {
-                return con;
-            },
-            size() {
-                return con.length;
-            }
-        };
+        if (me.entries.length === 0) {
+            compilation.assets[me.fileName] = {
+                source() {
+                    return con;
+                },
+                size() {
+                    return con.length;
+                }
+            };
+        }
+        else {
+            me.entries.forEach(entryConfig => {
+                let entryName = entryConfig.name;
+                let entryPath = entryConfig.urlReg.toString === '/\//' ? '/' : `/${entryName}/`;
+                let entryContent = con.replace(
+                    /\.register\(['"]\/(.+?)\.js\?([^'"]+?)['"]/,
+                    `.register('/${entryName}-$1.js?$2', {scope: '${entryPath}'}`
+                );
+                compilation.assets[`${entryName}-${me.fileName}`] = {
+                    source() {
+                        return entryContent;
+                    },
+                    size() {
+                        return entryContent.length;
+                    }
+                };
+            });
+        }
 
         Object.keys(compilation.assets).forEach(asset => {
             // 默认会给每个 html 文件添加 sw-register.js
@@ -166,7 +187,18 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
             if (!isIn(asset, me.excludes) && (/\.html$/.test(asset) || isIn(asset, me.includes))) {
                 let htmlContent = compilation.assets[asset].source().toString();
                 let swRegisterEntryFileTpl = fs.readFileSync(swRegisterEntryFilePath, 'utf-8');
-                let swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)(me);
+                let swRegisterEntryFileContent;
+
+                if (me.entries.length !== 0) {
+                    let entryName = asset.match(/(.+?)\.html$/)[1];
+                    swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)({
+                        publicPath: me.publicPath,
+                        fileName: `${entryName}-` + me.fileName
+                    });
+                }
+                else {
+                    swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)(me);
+                }
 
                 htmlContent = htmlContent.replace(/<\/body>/, `${swRegisterEntryFileContent}</body>`);
 
