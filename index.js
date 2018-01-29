@@ -164,12 +164,12 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
         else {
             me.entries.forEach(entryConfig => {
                 let entryName = entryConfig.name;
-                let entryPath = entryConfig.urlReg.toString === '/\//' ? '/' : `/${entryName}/`;
-                let entryContent = con.replace(
-                    /\.register\(['"]\/(.+?)\.js\?([^'"]+?)['"]/,
-                    `.register('/${entryName}-$1.js?$2', {scope: '${entryPath}'}`
-                );
-                compilation.assets[`${entryName}-${me.fileName}`] = {
+                let entryPath = entryConfig.urlReg.toString() === '/\\//' ? '/' : `/${entryName}/`;
+
+                // add scope to register
+                let entryContent = con.replace(/\.register\(([^\)]+)\)/, `.register($1, {scope: '${entryPath}'})`);
+
+                compilation.assets[`${entryName}/${me.fileName}`] = {
                     source() {
                         return entryContent;
                     },
@@ -190,10 +190,9 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                 let swRegisterEntryFileContent;
 
                 if (me.entries.length !== 0) {
-                    let entryName = asset.match(/(.+?)\.html$/)[1];
                     swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)({
                         publicPath: me.publicPath,
-                        fileName: `${entryName}-` + me.fileName
+                        fileName: me.fileName
                     });
                 }
                 else {
