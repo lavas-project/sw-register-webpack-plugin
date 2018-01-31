@@ -190,9 +190,10 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                 let swRegisterEntryFileContent;
 
                 if (me.entries.length !== 0) {
+                    let entryName = asset.match(/(.+?)\/(.+?)\.html$/)[1];
                     swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)({
                         publicPath: me.publicPath,
-                        fileName: me.fileName
+                        fileName: `${entryName}/${me.fileName}`
                     });
                 }
                 else {
