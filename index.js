@@ -164,10 +164,11 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
         else {
             me.entries.forEach(entryConfig => {
                 let entryName = entryConfig.name;
-                let entryPath = entryConfig.urlReg.toString() === '/\\//' ? '/' : `/${entryName}/`;
+                let entryPath = entryConfig.urlReg.toString() === '/^\\//' ? '/' : `/${entryName}/`;
 
                 // add scope to register
-                let entryContent = con.replace(/\.register\(([^\)]+)\)/, `.register($1, {scope: '${entryPath}'})`);
+                let entryContent = con.replace(/\.register\(([^\)]+)\)/, `.register($1, {scope: '${entryPath}'})`)
+                    .replace('/service-worker.js', '/' + entryName + '/service-worker.js');
 
                 compilation.assets[`${entryName}/${me.fileName}`] = {
                     source() {
