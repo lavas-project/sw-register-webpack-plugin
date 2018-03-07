@@ -101,7 +101,7 @@ function SwRegisterPlugin(options = {}) {
         filePath = path.resolve(__dirname, 'templates', 'sw-register.js');
     }
     this.filePath = filePath;
-    this.fileName = path.basename(filePath);
+    this.fileName = options.output || path.basename(filePath);
     this.version = options.version || getVersion();
     this.prefix = options.prefix;
     this.excludes = options.excludes || [];
