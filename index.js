@@ -119,7 +119,11 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
     compiler.plugin('emit', (compilation, callback) => {
         let prefix = me.prefix || compilation.outputOptions.publicPath || '';
-        let publicPath = me.publicPath = (prefix + '/').replace(/\/{1,}/g, '/');
+        if (!/\/$/.test(prefix)) {
+            prefix = prefix + '/';
+        }
+
+        let publicPath = me.publicPath = prefix;
         let con = fs.readFileSync(swRegisterFilePath, 'utf-8');
         let version = me.version;
 
