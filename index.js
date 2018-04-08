@@ -101,7 +101,7 @@ function SwRegisterPlugin(options = {}) {
         filePath = path.resolve(__dirname, 'templates', 'sw-register.js');
     }
     this.filePath = filePath;
-    this.fileName = path.basename(filePath);
+    this.fileName = options.output || path.basename(filePath);
     this.version = options.version || getVersion();
     this.prefix = options.prefix;
     this.excludes = options.excludes || [];
@@ -119,7 +119,11 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
     compiler.plugin('emit', (compilation, callback) => {
         let prefix = me.prefix || compilation.outputOptions.publicPath || '';
-        let publicPath = me.publicPath = (prefix + '/').replace(/\/{1,}/g, '/');
+        if (!/\/$/.test(prefix)) {
+            prefix = prefix + '/';
+        }
+
+        let publicPath = me.publicPath = prefix;
         let con = fs.readFileSync(swRegisterFilePath, 'utf-8');
         let version = me.version;
 

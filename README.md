@@ -108,6 +108,16 @@ excludes 是指定工程中符合自动注册的文件中的某一些文件可�
 
 插件会默认使用 webpack output 中的 publicPath 来做为 service-worker.js 的 scope， 如果不想使用这个 scope， 可以通过 prefix 指定自定义的 scope。
 
+### output
+
+```js
+{
+    output: '/module/sw-register.js'
+}
+```
+
+更改输出的位置，建议和`prefix`搭配使用。
+
 ### 注意事项
 
 `sw-register-webpack-plugin` 有一个内置的 `message` 时间处理函数，其作用是专门接受 `service-worker.js` 发送的 `postMessage` 事件
