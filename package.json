@@ -1,6 +1,6 @@
 {
   "name": "sw-register-webpack-plugin",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "a webpack plugin for serviceWorker register and serviceWorker no-cache soultion",
   "main": "index.js",
   "scripts": {
