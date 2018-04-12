@@ -186,7 +186,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
                 // add scope to register
                 let entryContent = con.replace(/\.register\(([^\)]+)\)/, `.register($1, {scope: '${scope}'})`)
-                    .replace('/service-worker.js', swName);
+                    .replace('/service-worker.js', '/' + swName);
 
                 compilation.assets[`${entryName}/${me.fileName}`] = {
                     source() {
