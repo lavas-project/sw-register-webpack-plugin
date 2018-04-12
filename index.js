@@ -106,7 +106,9 @@ function SwRegisterPlugin(options = {}) {
     this.prefix = options.prefix;
     this.excludes = options.excludes || [];
     this.includes = options.includes || [];
+    this.scope = options.scope || '/';
     this.entries = options.entries || [];
+    this.entriesInfo = {};
 }
 /* eslint-enable fecs-prefer-class */
 
@@ -156,6 +158,10 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
         });
 
         if (me.entries.length === 0) {
+            if (me.scope !== '/') {
+                con = con.replace(/\.register\(([^\)]+)\)/, `.register($1, {scope: '${me.scope}'})`);
+            }
+
             compilation.assets[me.fileName] = {
                 source() {
                     return con;
@@ -168,11 +174,19 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
         else {
             me.entries.forEach(entryConfig => {
                 let entryName = entryConfig.name;
-                let entryPath = entryConfig.urlReg.toString() === '/^\\//' ? '/' : `/${entryName}/`;
+                let swName = entryConfig.serviceWorker.swName || `/${entryName}/service-worker.js`;
+                let swRegisterName = entryConfig.serviceWorker.swRegisterName || `${entryName}/${me.fileName}`;
+                let scope = entryConfig.serviceWorker.scope;
+
+                if (!scope) {
+                    scope = entryConfig.urlReg.toString() === '/^\\//' ? '/' : `/${entryName}/`;
+                }
+
+                me.entriesInfo[entryName] = {swName, swRegisterName, scope};
 
                 // add scope to register
-                let entryContent = con.replace(/\.register\(([^\)]+)\)/, `.register($1, {scope: '${entryPath}'})`)
-                    .replace('/service-worker.js', '/' + entryName + '/service-worker.js');
+                let entryContent = con.replace(/\.register\(([^\)]+)\)/, `.register($1, {scope: '${scope}'})`)
+                    .replace('/service-worker.js', '/' + swName);
 
                 compilation.assets[`${entryName}/${me.fileName}`] = {
                     source() {
@@ -196,9 +210,11 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
                 if (me.entries.length !== 0) {
                     let entryName = asset.match(/(.+?)\/(.+?)\.html$/)[1];
+                    let entryInfo = me.entriesInfo[entryName];
+
                     swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)({
                         publicPath: me.publicPath,
-                        fileName: `${entryName}/${me.fileName}`
+                        fileName: entryInfo.swRegisterName
                     });
                 }
                 else {
