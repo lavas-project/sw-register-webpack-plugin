@@ -6,6 +6,7 @@ node_modules
 *.swp
 .idea
 dist
+dev
 examples/*/dist
 coverage
 .nyc_output

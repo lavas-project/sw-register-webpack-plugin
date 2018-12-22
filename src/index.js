@@ -6,7 +6,6 @@
 const etpl = require('etpl')
 const fs = require('fs')
 const path = require('path')
-const babel = require('babel-core')
 
 let cwd = process.cwd()
 
@@ -35,30 +34,6 @@ function getVersion () {
     padding(d.getHours()) +
     padding(d.getMinutes()) +
     padding(d.getSeconds())
-}
-
-/**
- * babel 编译
- *
- * @param {string} source 源代码
- * @return {string} 编译后的代码
- */
-function babelCompiler (source) {
-  return babel.transform(source, {
-    comments: false,
-    minified: true,
-    presets: [
-      [
-        'env',
-        {
-          targets: {
-            node: 3
-          },
-          modules: false
-        }
-      ]
-    ]
-  }).code
 }
 
 /**
@@ -120,37 +95,7 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
       prefix = prefix + '/'
     }
 
-    let publicPath = me.publicPath = prefix
     let con = fs.readFileSync(swRegisterFilePath, 'utf-8')
-    let version = me.version
-
-    /* eslint-disable max-nested-callbacks */
-    con = babelCompiler(con).replace(/(['"])([^\s;,()]+?\.js[^'"]*)\1/g, item => {
-      let swFilePath = RegExp.$2
-
-      if (/\.js/g.test(item)) {
-        item = item.replace(/\?/g, '&')
-      }
-
-      // if is full url path or relative path
-      if (/^(http(s)?:)?\/\//.test(swFilePath) || swFilePath[0] !== '/') {
-        return item.replace(/\.js/g, ext => `${ext}?v=${version}`)
-      }
-
-      // if is absolute path
-      if (swFilePath.indexOf(publicPath) !== 0) {
-        let ret = item.replace(
-          swFilePath,
-          (publicPath + '/' + swFilePath)
-            .replace(/\/{1,}/g, '/')
-            .replace(/\.js/g, ext => `${ext}?v=${version}`)
-        )
-
-        return ret
-      }
-
-      return item.replace(/\.js/g, ext => `${ext}?v=${version}`)
-    })
 
     if (me.entries.length === 0) {
       if (me.scope !== '/') {

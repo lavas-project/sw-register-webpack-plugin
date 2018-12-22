@@ -5,7 +5,6 @@
 
 /* eslint-disable fecs-use-standard-promise */
 
-import 'babel-polyfill'
 import * as path from 'path'
 import Promise from 'bluebird'
 import test from 'ava'
@@ -20,9 +19,9 @@ const fs = testFs
 const simpleExamplePath = path.resolve(__dirname, '../examples/simple')
 const webpackBuildPath = path.resolve(simpleExamplePath, './dist')
 
-const readdir = Promise.promisify(fs.readdir, { context: fs })
+const readdir = Promise.promisify(fs.readdirSync, { context: fs })
 
-let webpackBuildStats = null
+let webpackBuildStats
 
 test.before('run webpack build first', async t => {
   webpackBuildStats = await runWebpackCompilerMemoryFs(simpleConfig)

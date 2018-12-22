@@ -14,13 +14,13 @@ const path = require('path')
 
 const outputFileSystem = new MFS()
 
-/* eslint-disable fecs-prefer-class */
 /**
  * mock copy plugin
  *
  * @constructor
  */
-function MockCopyPlugin () {}
+function MockCopyPlugin () {
+}
 
 MockCopyPlugin.prototype.apply = function (compiler) {
   compiler.plugin('compilation', function (compilation) {
@@ -42,8 +42,6 @@ MockCopyPlugin.prototype.apply = function (compiler) {
     })
   })
 }
-
-/* eslint-enable fecs-prefer-class */
 
 exports.runWebpackCompilerMemoryFs = function runWebpackCompiler (config) {
   const compiler = webpack(config)
