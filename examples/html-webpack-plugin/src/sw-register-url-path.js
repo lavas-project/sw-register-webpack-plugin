@@ -5,4 +5,4 @@
 
 /* global navigator */
 
-navigator.servcieWorker && navigator.serviceWorker.register('https://host.com/a/b/service-worker.js?aa=1');
+navigator.servcieWorker && navigator.serviceWorker.register('https://host.com/a/b/service-worker.js?aa=1')
