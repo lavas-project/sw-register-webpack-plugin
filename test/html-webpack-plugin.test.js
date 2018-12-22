@@ -58,55 +58,55 @@ test('it should emit a html file', async t => {
 })
 
 test('it should insert sw-register-entry into html', async t => {
-  let htmlContent = await readFile(path.join(webpackBuildPath, 'index.html'))
+  let htmlContent = await readFile(path.join(webpackBuildPath, 'index.html'), 'utf-8')
   t.true(htmlContent.toString().includes('script.src = \'/a/b/sw-register.js?v='))
 })
 
 test('it should have a version `test_version`', async t => {
-  let htmlContent = await readFile(path.join(webpackBuildPath, 'sw-register.js'))
+  let htmlContent = await readFile(path.join(webpackBuildPath, 'sw-register.js'), 'utf-8')
   t.true(htmlContent.toString().includes('/service-worker.js?v=test_version'))
 })
 
 test('it should hava right prefix `/a/b`', async t => {
-  let htmlContent = await readFile(path.join(webpackBuildPath, 'index.html'))
-  let swContent = await readFile(path.join(webpackBuildPath, 'sw-register.js'))
+  let htmlContent = await readFile(path.join(webpackBuildPath, 'index.html'), 'utf-8')
+  let swContent = await readFile(path.join(webpackBuildPath, 'sw-register.js'), 'utf-8')
 
   t.true(htmlContent.toString().includes('script.src = \'/a/b/sw-register.js?v='))
   t.true(swContent.toString().includes('/a/b/service-worker.js?v='))
 })
 
 test('it should no sw-register in str.html', async t => {
-  let html = await readFile(path.join(webpackBuildPath, 'str.html'))
+  let html = await readFile(path.join(webpackBuildPath, 'str.html'), 'utf-8')
 
   t.false(html.toString().includes('sw-register.js'))
 })
 
 test('it should no sw-register in reg.html', async t => {
-  let html = await readFile(path.join(webpackBuildPath, 'reg.html'))
+  let html = await readFile(path.join(webpackBuildPath, 'reg.html'), 'utf-8')
 
   t.false(html.toString().includes('sw-register.js'))
 })
 
 test('it should no sw-register in func.html', async t => {
-  let html = await readFile(path.join(webpackBuildPath, 'func.html'))
+  let html = await readFile(path.join(webpackBuildPath, 'func.html'), 'utf-8')
 
   t.false(html.toString().includes('sw-register.js'))
 })
 
 test('it should hava sw-register.js in str.html.tpl', async t => {
-  let html = await readFile(path.join(webpackBuildPath, 'str.html.tpl'))
+  let html = await readFile(path.join(webpackBuildPath, 'str.html.tpl'), 'utf-8')
 
   t.true(html.toString().includes('sw-register.js'))
 })
 
 test('it should hava sw-register.js in reg.html.tpl', async t => {
-  let html = await readFile(path.join(webpackBuildPath, 'reg.html.tpl'))
+  let html = await readFile(path.join(webpackBuildPath, 'reg.html.tpl'), 'utf-8')
 
   t.true(html.toString().includes('sw-register.js'))
 })
 
 test('it should hava sw-register.js in func.html.tpl', async t => {
-  let html = await readFile(path.join(webpackBuildPath, 'func.html.tpl'))
+  let html = await readFile(path.join(webpackBuildPath, 'func.html.tpl'), 'utf-8')
 
   t.true(html.toString().includes('sw-register.js'))
 })

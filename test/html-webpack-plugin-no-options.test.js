@@ -27,6 +27,6 @@ test.before('run webpack build first', async t => {
 })
 
 test('it should be ok', async t => {
-  let htmlContent = await readFile(path.join(webpackBuildPath, 'index.html'))
+  let htmlContent = await readFile(path.join(webpackBuildPath, 'index.html'), 'utf8')
   t.true(htmlContent.toString().includes('/sw-register.js?v='))
 })
