@@ -2,7 +2,7 @@
   "name": "sw-register-webpack-plugin",
   "version": "1.0.20",
   "description": "a webpack plugin for serviceWorker register and serviceWorker no-cache soultion",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "rimraf dist && cross-env NODE_ENV=production babel ./src/index.js --out-dir dist && node build.js",
     "lint": "eslint ./{exmaples,src,test,templates}/**/*.{js,html}",
