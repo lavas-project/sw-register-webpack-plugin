@@ -14,33 +14,27 @@ const path = require('path')
 
 const outputFileSystem = new MFS()
 
-/**
- * mock copy plugin
- *
- * @constructor
- */
-function MockCopyPlugin () {
-}
+class MockCopyPlugin {
+  apply (compiler) {
+    compiler.hooks.compilation.tap('MockCopyPlugin', function (compilation) {
+      let files = fs.readdirSync(path.resolve(__dirname, '../examples/html-webpack-plugin/src/htmls'))
 
-MockCopyPlugin.prototype.apply = function (compiler) {
-  compiler.plugin('compilation', function (compilation) {
-    let files = fs.readdirSync(path.resolve(__dirname, '../examples/html-webpack-plugin/src/htmls'))
-
-    files.forEach(file => {
-      let fileContent = fs.readFileSync(
-        path.resolve(__dirname, '../examples/html-webpack-plugin/src/htmls', file),
-        'utf-8'
-      )
-      compilation.assets[file] = {
-        source () {
-          return fileContent
-        },
-        size () {
-          return fileContent.length
+      files.forEach(file => {
+        let fileContent = fs.readFileSync(
+          path.resolve(__dirname, '../examples/html-webpack-plugin/src/htmls', file),
+          'utf-8'
+        )
+        compilation.assets[file] = {
+          source () {
+            return fileContent
+          },
+          size () {
+            return fileContent.length
+          }
         }
-      }
+      })
     })
-  })
+  }
 }
 
 exports.runWebpackCompilerMemoryFs = function runWebpackCompiler (config) {
