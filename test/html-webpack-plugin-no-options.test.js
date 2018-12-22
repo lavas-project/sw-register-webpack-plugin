@@ -20,7 +20,7 @@ const fs = testFs
 const simpleExamplePath = path.resolve(__dirname, '../examples/html-webpack-plugin')
 const webpackBuildPath = path.resolve(simpleExamplePath, './dist')
 
-const readFile = Promise.promisify(fs.readFile, { context: fs })
+const readFile = Promise.promisify(fs.readFileSync, { context: fs })
 
 test.before('run webpack build first', async t => {
   await runWebpackCompilerMemoryFs(simpleConfig())

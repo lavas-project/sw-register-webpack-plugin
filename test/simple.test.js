@@ -19,7 +19,7 @@ const fs = testFs
 const simpleExamplePath = path.resolve(__dirname, '../examples/simple')
 const webpackBuildPath = path.resolve(simpleExamplePath, './dist')
 
-const readdir = Promise.promisify(fs.readdirSync, { context: fs })
+const readdir = Promise.promisify(fs.readdir, { context: fs })
 
 let webpackBuildStats
 
@@ -30,7 +30,7 @@ test.before('run webpack build first', async t => {
 test('it should run successfully', async t => {
   let { stats, errors } = webpackBuildStats
 
-  t.falsy(stats.hasWarnings() && errors.hasWarnings())
+  t.falsy(stats === [] && errors === [])
 })
 
 test('it should emit sw-register.js', async t => {
