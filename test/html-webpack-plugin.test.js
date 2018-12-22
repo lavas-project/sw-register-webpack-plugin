@@ -54,6 +54,7 @@ test('it should run successfully', async t => {
 
 test('it should emit a html file', async t => {
   let files = await readdir(webpackBuildPath)
+
   t.true(files.includes('index.html'))
 })
 

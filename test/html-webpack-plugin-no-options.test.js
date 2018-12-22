@@ -3,9 +3,6 @@
  * @author panyuqi (pyqiverson@gmail.com)
  */
 
-/* eslint-disable fecs-use-standard-promise */
-/* eslint-disable fecs-prefer-async-await */
-
 import * as path from 'path'
 import Promise from 'bluebird'
 import test from 'ava'
@@ -22,11 +19,12 @@ const webpackBuildPath = path.resolve(simpleExamplePath, './dist')
 
 const readFile = Promise.promisify(fs.readFileSync, { context: fs })
 
-test.before('run webpack build first', async t => {
+test.before('run webpack build first', async () => {
   await runWebpackCompilerMemoryFs(simpleConfig())
 })
 
 test('it should be ok', async t => {
   let htmlContent = await readFile(path.join(webpackBuildPath, 'index.html'), 'utf8')
+
   t.true(htmlContent.toString().includes('/sw-register.js?v='))
 })

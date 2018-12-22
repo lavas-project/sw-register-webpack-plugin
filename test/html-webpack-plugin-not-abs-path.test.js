@@ -36,15 +36,18 @@ test.before('run webpack build first', async t => {
 
 test('it should no service-worker.js version when service-worker.js path is relative', async t => {
   let swContent = await readFile(path.join(webpackBuildPath, 'sw-register-relative-path.js'), 'utf-8')
+
   t.true(swContent.toString().includes('./a/b/service-worker.js?v='))
 })
 
 test('it should no service-worker.js version when service-worker.js path is url path', async t => {
   let swContent = await readFile(path.join(webpackBuildPath, 'sw-register-url-path.js'), 'utf-8')
+
   t.true(swContent.toString().includes('https://host.com/a/b/service-worker.js?v='))
 })
 
 test('it should no service-worker.js version when service-worker.js path is url path alias', async t => {
   let swContent = await readFile(path.join(webpackBuildPath, 'sw-register-url-path-alias.js'), 'utf-8')
+
   t.true(swContent.toString().includes('//host.com/a/b/service-worker.js?v='))
 })

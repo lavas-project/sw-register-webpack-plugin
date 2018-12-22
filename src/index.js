@@ -58,7 +58,6 @@ function isIn (asset, rules) {
   return false
 }
 
-/* eslint-disable fecs-prefer-class */
 /**
  * sw Register 插件
  *
@@ -81,8 +80,6 @@ function SwRegisterPlugin (options = {}) {
   this.entries = options.entries || []
   this.entriesInfo = {}
 }
-
-/* eslint-enable fecs-prefer-class */
 
 SwRegisterPlugin.prototype.apply = function (compiler) {
   let me = this
