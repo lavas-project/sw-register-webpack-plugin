@@ -28,7 +28,7 @@ import SwRegisterWebpackPlugin from 'sw-register-webpack-plugin';
 webpack({
     // ...
     plugins: [
-        new SwReginsterWebpackPlugin(/* options */);
+        new SwRegisterWebpackPlugin(/* options */);
     ]
     // ...
 });
