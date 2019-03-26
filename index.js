@@ -6,7 +6,7 @@
 const etpl = require('etpl');
 const fs = require('fs');
 const path = require('path');
-const babel = require('babel-core');
+const babel = require("@babel/core");
 
 let cwd = process.cwd();
 
@@ -43,13 +43,13 @@ function getVersion() {
  * @param {string} source 源代码
  * @return {string} 编译后的代码
  */
-function babelCompiler(source) {
+function babelCompiler (source) {
     return babel.transform(source, {
         comments: false,
         minified: true,
         presets: [
             [
-                'env',
+                '@babel/preset-env',
                 {
                     targets: {
                         node: 3
@@ -116,10 +116,10 @@ function SwRegisterPlugin(options = {}) {
 
 SwRegisterPlugin.prototype.apply = function (compiler) {
     let me = this;
-    let swRegisterEntryFilePath = path.resolve(__dirname, 'templates', 'sw-register-entry.js.tpl');
+    let swRegisterEntryFilePath = path.resolve(__dirname, '../.ivue/sw-register-entry.js.tpl');
     let swRegisterFilePath = me.filePath;
 
-    compiler.plugin('emit', (compilation, callback) => {
+    compiler.hooks.emit.tap('emit', (compilation, callback) => {
         let prefix = me.prefix || compilation.outputOptions.publicPath || '';
         if (!/\/$/.test(prefix)) {
             prefix = prefix + '/';
@@ -163,10 +163,10 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
             }
 
             compilation.assets[me.fileName] = {
-                source() {
+                source () {
                     return con;
                 },
-                size() {
+                size () {
                     return con.length;
                 }
             };
@@ -182,17 +182,17 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                     scope = entryConfig.urlReg.toString() === '/^\\//' ? '/' : `/${entryName}/`;
                 }
 
-                me.entriesInfo[entryName] = {swName, swRegisterName, scope};
+                me.entriesInfo[entryName] = { swName, swRegisterName, scope };
 
                 // add scope to register
                 let entryContent = con.replace(/\.register\(([^\)]+)\)/, `.register($1, {scope: '${scope}'})`)
                     .replace('/service-worker.js', '/' + swName);
 
                 compilation.assets[`${entryName}/${me.fileName}`] = {
-                    source() {
+                    source () {
                         return entryContent;
                     },
-                    size() {
+                    size () {
                         return entryContent.length;
                     }
                 };
@@ -224,17 +224,15 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
                 htmlContent = htmlContent.replace(/<\/body>/, `${swRegisterEntryFileContent}</body>`);
 
                 compilation.assets[asset] = {
-                    source() {
+                    source () {
                         return htmlContent;
                     },
-                    size() {
+                    size () {
                         return htmlContent.length;
                     }
                 };
             }
         });
-
-        callback();
     });
 };
 
