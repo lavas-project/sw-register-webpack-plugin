@@ -4,6 +4,7 @@
  */
 
 const etpl = require('etpl');
+const webpack = require('webpack');
 const fs = require('fs');
 const path = require('path');
 const babel = require('@babel/core');
@@ -239,7 +240,8 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
 
     if (webpack.version > '4.0.0') {
         compiler.hooks.emit.tap('emit', emitCallback);
-    } else {
+    }
+    else {
         compiler.plugin('emit', emitCallback);
     }
 };
