@@ -6,7 +6,7 @@
 /* eslint-disable fecs-use-standard-promise */
 /* eslint-disable fecs-prefer-async-await */
 
-import 'babel-polyfill';
+import '@babel/polyfill';
 import * as path from 'path';
 import Promise from 'bluebird';
 import test from 'ava';
@@ -49,8 +49,8 @@ test.before('run webpack build first', async t => {
 });
 
 test('it should run successfully', async t => {
-    let {stats, errors} = webpackBuildStats;
-    t.falsy(stats.hasWarnings() && errors.hasWarnings());
+    let {errors} = webpackBuildStats;
+    t.true(errors && errors.length === 0);
 });
 
 test('it should emit a html file', async t => {
@@ -60,7 +60,7 @@ test('it should emit a html file', async t => {
 
 test('it should insert sw-register-entry into html', async t => {
     let htmlContent = await readFile(path.join(webpackBuildPath, 'index.html'));
-    t.true(htmlContent.toString().includes('script.src = \'/a/b/sw-register.js?v='));
+    t.true(htmlContent.toString().includes('/a/b/sw-register.js?v='));
 });
 
 test('it should have a version `test_version`', async t => {
@@ -72,7 +72,7 @@ test('it should hava right prefix `/a/b`', async t => {
     let htmlContent = await readFile(path.join(webpackBuildPath, 'index.html'));
     let swContent = await readFile(path.join(webpackBuildPath, 'sw-register.js'));
 
-    t.true(htmlContent.toString().includes('script.src = \'/a/b/sw-register.js?v='));
+    t.true(htmlContent.toString().includes('/a/b/sw-register.js?v='));
     t.true(swContent.toString().includes('/a/b/service-worker.js?v='));
 });
 
