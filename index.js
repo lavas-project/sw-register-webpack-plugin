@@ -3,10 +3,9 @@
  * @author mj(zoumiaojiang@gmail.com)
  */
 
-const etpl = require('etpl');
 const fs = require('fs');
 const path = require('path');
-const babel = require('babel-core');
+const babel = require('@babel/core');
 
 let cwd = process.cwd();
 
@@ -49,7 +48,7 @@ function babelCompiler(source) {
         minified: true,
         presets: [
             [
-                'env',
+                '@babel/preset-env',
                 {
                     targets: {
                         node: 3
@@ -86,6 +85,25 @@ function isIn(asset, rules) {
     return false;
 }
 
+/**
+ * 渲染 sw-register.js 的注入入口代码
+ *
+ * @param {Object} data 渲染需要提供的数据
+ * @return {string} 渲染后的内容
+ */
+function renderSwRegisterEntry(data) {
+    return '<script>'
+        + 'window.onload = function () {'
+            + 'var script = document.createElement("script");'
+            + 'var firstScript = document.getElementsByTagName("script")[0];'
+            + 'script.type = "text/javascript";'
+            + 'script.async = true;'
+            + 'script.src = "' + data.publicPath + data.fileName + '?v=" + Date.now();'
+            + 'firstScript.parentNode.insertBefore(script, firstScript);'
+        + '};'
+    + '</script>';
+}
+
 
 /* eslint-disable fecs-prefer-class */
 /**
@@ -116,13 +134,12 @@ function SwRegisterPlugin(options = {}) {
 
 SwRegisterPlugin.prototype.apply = function (compiler) {
     let me = this;
-    let swRegisterEntryFilePath = path.resolve(__dirname, 'templates', 'sw-register-entry.js.tpl');
     let swRegisterFilePath = me.filePath;
 
-    compiler.plugin('emit', (compilation, callback) => {
+    let emitCallback = (compilation, callback) => {
         let prefix = me.prefix || compilation.outputOptions.publicPath || '';
         if (!/\/$/.test(prefix)) {
-            prefix = prefix + '/';
+            prefix += '/';
         }
 
         let publicPath = me.publicPath = prefix;
@@ -205,20 +222,19 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
             // 接受三种形式的值：字符串，正则表达式，回调函数
             if (!isIn(asset, me.excludes) && (/\.html$/.test(asset) || isIn(asset, me.includes))) {
                 let htmlContent = compilation.assets[asset].source().toString();
-                let swRegisterEntryFileTpl = fs.readFileSync(swRegisterEntryFilePath, 'utf-8');
                 let swRegisterEntryFileContent;
 
                 if (me.entries.length !== 0) {
                     let entryName = asset.match(/(.+?)\/(.+?)\.html$/)[1];
                     let entryInfo = me.entriesInfo[entryName];
 
-                    swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)({
+                    swRegisterEntryFileContent = renderSwRegisterEntry({
                         publicPath: me.publicPath,
                         fileName: entryInfo.swRegisterName
                     });
                 }
                 else {
-                    swRegisterEntryFileContent = etpl.compile(swRegisterEntryFileTpl)(me);
+                    swRegisterEntryFileContent = renderSwRegisterEntry(me);
                 }
 
                 htmlContent = htmlContent.replace(/<\/body>/, `${swRegisterEntryFileContent}</body>`);
@@ -234,8 +250,15 @@ SwRegisterPlugin.prototype.apply = function (compiler) {
             }
         });
 
-        callback();
-    });
+        callback && callback();
+    };
+
+    if (compiler.hooks) {
+        compiler.hooks.emit.tap('emit', emitCallback);
+    }
+    else {
+        compiler.plugin('emit', emitCallback);
+    }
 };
 
 module.exports = SwRegisterPlugin;

@@ -23,7 +23,7 @@ const outputFileSystem = new MFS();
 function MockCopyPlugin() {}
 
 MockCopyPlugin.prototype.apply = function (compiler) {
-    compiler.plugin('compilation', function (compilation) {
+    compiler.hooks.emit.tap('compilation', function (compilation) {
         let files = fs.readdirSync(path.resolve(__dirname, '../examples/html-webpack-plugin/src/htmls'));
 
         files.forEach(file => {
@@ -57,7 +57,6 @@ exports.runWebpackCompilerMemoryFs = function runWebpackCompiler(config) {
             const {errors, warnings, assets, entrypoints} = compilation;
 
             const statsJson = stats.toJson();
-
             return {
                 assets,
                 entrypoints,

@@ -6,7 +6,7 @@
 /* eslint-disable fecs-use-standard-promise */
 /* eslint-disable fecs-prefer-async-await */
 
-import 'babel-polyfill';
+import '@babel/polyfill';
 import * as path from 'path';
 import Promise from 'bluebird';
 import test from 'ava';
